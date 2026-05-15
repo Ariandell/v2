@@ -1,0 +1,132 @@
+# ==========================================
+# AI Music Recommendation System — Config
+# ==========================================
+
+# --- Audio Processing ---
+audio:
+  sample_rate: 22050          # Hz
+  mono: true
+  fragment_duration: 60       # seconds to extract
+  min_duration: 10            # skip tracks shorter than this
+  max_silence_ratio: 0.3      # skip if >30% silence
+  output_format: "wav"
+
+# --- Dataset ---
+dataset:
+  tracks_per_genre: 150       # target per genre
+  genres:
+    # 🎸 Rock Family (6)
+    - classic_rock
+    - modern_metal
+    - punk_hardcore
+    - post_punk
+    - grunge
+    - alt_rock
+    - prog_rock
+    # 🎤 Hip-Hop Family (5)
+    - oldschool_hiphop
+    - trap
+    - drill
+    - cloud_rap
+    - phonk
+    # 🎹 Pop Family (4)
+    - mainstream_pop
+    - k_pop
+    - indie_pop
+    - hyperpop
+    # 🎻 Classical Family (3)
+    - orchestral
+    - opera
+    - chamber_piano
+    # 🎷 Jazz Family (3)
+    - classic_jazz
+    - smooth_jazz
+    - jazz_fusion
+    # 🎙️ R&B Family (2)
+    - classic_rnb
+    - modern_rnb
+    # 🔊 Electronic Family (5)
+    - house_techno
+    - dubstep_bass
+    - drum_and_bass
+    - retrowave
+    - darksynth
+    - ambient_idm
+    # 🌸 Asian Family (3)
+    - j_rock
+    - anime_ost
+    - city_pop
+    # 🌍 Other (4)
+    - lofi_chillhop
+    - reggaeton_latin
+    - folk_acoustic
+    - midwestern_emo
+
+# --- Feature Extraction ---
+features:
+  mfcc_coefficients: 20
+  chroma_type: "cqt"          # cqt or stft
+  n_mels: 128                 # for mel-spectrogram
+  hop_length: 512
+  n_fft: 2048
+
+  # Statistics computed for each time-series feature
+  statistics:
+    - mean
+    - std
+    - min
+    - max
+    - skewness
+    - kurtosis
+
+# --- Mel-spectrogram (for CNN) ---
+spectrogram:
+  height: 128
+  width: 256                  # ~60 seconds at hop_length=512
+  save_format: "npy"          # npy or png
+
+# --- Model ---
+model:
+  # CNN Architecture
+  cnn:
+    input_channels: 1
+    conv_filters: [32, 64, 128]
+    embedding_dim: 256
+    dropout: 0.3
+    
+  # Training
+  training:
+    batch_size: 32
+    epochs: 50
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    scheduler: "cosine"       # cosine or step
+    early_stopping_patience: 10
+
+  # Multi-label classification
+  classification:
+    type: "multi_label"       # multi_label or single_label
+    loss: "bce_with_logits"   # BCEWithLogitsLoss
+    threshold: 0.5            # for prediction
+
+# --- Recommendations ---
+recommendations:
+  top_k: 10                   # number of recommendations
+  similarity_metric: "cosine" # cosine or euclidean
+
+# --- Data Augmentation ---
+augmentation:
+  enabled: true
+  pitch_shift_semitones: [-2, -1, 1, 2]
+  time_stretch_rates: [0.9, 0.95, 1.05, 1.1]
+  noise_factor: 0.005
+  random_crops: 3             # number of random 60s crops per track
+
+# --- Paths ---
+paths:
+  raw_audio: "data/raw"
+  spectrograms: "data/spectrograms"
+  features: "data/features.parquet"
+  metadata: "data/metadata.csv"
+  models: "models/"
+  logs: "logs/"

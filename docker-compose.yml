@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ammy_db
+    environment:
+      POSTGRES_USER: ammy_admin
+      POSTGRES_PASSWORD: ammy_password
+      POSTGRES_DB: ammy_music
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
